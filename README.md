@@ -7,12 +7,11 @@ Describe an idea, explore existing solutions, and find a personal twist worth bu
 ## How it works
 
 1. Share an idea, an annoyance, or an area of interest.
-2. Answer a few adaptive questions and confirm the brief.
-3. Explore existing solutions with links to sources.
-4. Pick what interests you and explain what is missing for you.
-5. Share your experience, time, and constraints.
-6. Choose between two small project directions.
-7. Get a 20–30 minute first step with a clear definition of done.
+2. Answer 2–4 adaptive questions; pick multiple options and add your own thoughts.
+3. Confirm the brief and explore up to four source-backed solutions.
+4. Compare what matches your idea and what useful extras each solution adds.
+5. Tick ideas you want to use and optionally add a comment.
+6. Get a product idea, tiny version, ready-to-use coding prompt, and next steps.
 
 The interface and AI responses are in English. Ideas can be entered in any language.
 
@@ -50,7 +49,7 @@ npm run smoke  # Full live flow; requires a running app and uses API credits
 
 ## Sources and limitations
 
-Source-backed claims, AI interpretations, and personal preferences are presented separately. Cards link to sources returned by web search; unsupported cards are excluded. If fewer than five solutions can be verified, the app shows partial results.
+Source-backed claims, AI interpretations, and personal preferences are presented separately. Cards link to sources returned by web search; unsupported cards are excluded. If fewer than four solutions can be verified, the app shows partial results.
 
 Source links establish provenance, not a guarantee that every AI interpretation is correct. A missing feature mention is not proof that the feature is absent. Check the original sources when a detail matters.
 

@@ -7,7 +7,7 @@ const assets={'/':['public/index.html','text/html; charset=utf-8'],'/app.js':['p
 function reply(res,status,data){res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'});res.end(JSON.stringify(data));}
 async function body(req){let raw='';for await(const chunk of req){raw+=chunk;if(raw.length>20000)throw new Error('This request is too large.');}return JSON.parse(raw||'{}');}
 export const server=http.createServer(async(req,res)=>{
- res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
+ res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' https://www.google.com; frame-ancestors 'none'; base-uri 'none'; form-action 'self'");
  if(req.headers.host!==`${host}:${port}`&&req.headers.host!==`localhost:${port}`)return reply(res,403,{error:'Invalid address.'});
  if(req.headers.origin&&!([`http://localhost:${port}`,`http://${host}:${port}`].includes(req.headers.origin)))return reply(res,403,{error:'This request origin is not allowed.'});
  try{

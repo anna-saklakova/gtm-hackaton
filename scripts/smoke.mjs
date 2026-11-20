@@ -15,10 +15,10 @@ english(state.research.note);for(const s of state.research.solutions){for(const 
 console.log(JSON.stringify({names:state.research.solutions.map(s=>({name:s.name,url:s.url,facts:s.facts.length})),note:state.research.note}));
 await act('feedback',{selected:state.research.solutions.length?[0]:[],answer:'Мне не хватает честных коротких заметок о сложностях конкретной собаки и договорённостей о пунктуальности. Хочу сделать для себя, без публичного маркетплейса. Я новичок: знаю немного HTML и JavaScript, есть два вечера по часу, бюджет ноль, готов разбираться, но без сервера, платежей и интеграций.'});
 for(let i=0;state.stage==='personal'&&i<4;i++)await act('answer',{answer:'Хочу учиться и получить простой инструмент для себя. Новичок в HTML/JS, два вечера по часу, бюджет 0. Можно локальный HTML с ручным вводом данных. Без сложных интеграций, регистрации и оплаты. Готов разбираться с простыми формами и localStorage.'});
-if(state.stage!=='directions'||state.directions.length!==2)throw new Error('Missing directions');
+if(state.stage!=='step'||state.directions.length!==1)throw new Error('Missing directions');
 for(const d of state.directions){for(const k of ['title','audience','task','difference','preference','mvp','difficulty','assumptions'])english(d[k]);for(const v of Object.values(d.firstStep))english(v);}
 console.log(JSON.stringify({directions:state.directions.map(d=>({title:d.title,mvp:d.mvp,preference:d.preference}))}));
-await act('choose',{index:0});
+if(!state.directions[0].buildPrompt||!state.directions[0].nextSteps.length)throw new Error('Missing prompt or next steps');
 if(state.stage!=='step'||!state.directions[0].firstStep.done)throw new Error('Missing first step');
 await writeFile('test-results/live-session.json',JSON.stringify(state,null,2));
 console.log('PASS: full live journey; saved test-results/live-session.json');
