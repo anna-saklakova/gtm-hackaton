@@ -1,61 +1,57 @@
 # Sidequest
 
-Интерфейс, ответы AI, ошибки и скачиваемый план — на английском. Обновлённый дизайн: фиолетовый и лаймовый акценты, короткие тексты, источники и подробности по раскрытию. Вводить задумку можно на любом языке.
+A small AI tool for hobby builders who want to stop overthinking and make something of their own.
 
-**Vercel:** настройка серверного ключа, облачных сессий и деплоя описана в [DEPLOY.md](DEPLOY.md). Ключ вводится как Secret в настройках проекта Vercel, не в GitHub.
+Describe an idea, explore existing solutions, and find a personal twist worth building. Sidequest helps you choose a small project and take a concrete first step—not predict business success.
 
-Локальный AI-микротул для хобби-билдеров: задумка → адаптивные уточнения → подтверждение → реальный веб-поиск → личная обратная связь → уточнение возможностей → два маленьких направления → первый шаг.
+## How it works
 
-## Запуск
+1. Share an idea, an annoyance, or an area of interest.
+2. Answer a few adaptive questions and confirm the brief.
+3. Explore existing solutions with links to sources.
+4. Pick what interests you and explain what is missing for you.
+5. Share your experience, time, and constraints.
+6. Choose between two small project directions.
+7. Get a 20–30 minute first step with a clear definition of done.
 
-Нужен Node.js 24+. Устанавливать зависимости не требуется.
+The interface and AI responses are in English. Ideas can be entered in any language.
 
-Ключ уже находится в `.env`. Не переносите его в браузер или исходники.
+## Run locally
 
-```powershell
+Requires Node.js 24. No dependencies need to be installed.
+
+1. Copy `.env.example` to `.env`.
+2. Configure your server-side environment variables locally.
+3. Start the app:
+
+```sh
 npm start
 ```
 
-Откройте http://localhost:3000. Для запуска двойным щелчком есть `Start.cmd`; для остановки нажмите Ctrl+C в окне сервера. Если сервер уже запущен, просто откройте адрес. При ошибке EADDRINUSE остановите прежний сервер.
+Open [localhost:3000](http://localhost:3000). On Windows, `Start.cmd` is also available.
 
-## Демо на две минуты
+Never commit `.env` or put credentials in frontend code.
 
-1. Введите: «Хочу сервис по быстрому поиску догситера в Берлине на несколько часов. Важны честность о сложностях и пунктуальность».
-2. Ответьте на недостающие уточнения, проверьте краткое понимание, запустите поиск. Поиск обычно занимает 30–90 секунд, предельное ожидание — 3 минуты.
-3. Откройте источник у карточки, отметьте интересное. Напишите: «Хочу личный локальный инструмент для сравнения договорённостей. Я новичок в HTML/JS, есть два вечера по часу, бюджет ноль, без сервера и интеграций».
-4. При необходимости ответьте на уточнение. Сравните два направления, выберите одно и сохраните первый шаг.
+## Deploy
 
-Это тестовая идея, а не встроенная тематика: приложение принимает любые задумки.
+The project includes a Vercel configuration. Use the **Other** preset, the repository root, and the build settings from `vercel.json`.
 
-## Архитектура и модели
+Configure credentials in the hosting provider's environment settings as secrets. See [deployment instructions](DEPLOY.md) for setup details.
 
-- Node HTTP-сервер, стандартный fetch, обычный HTML/CSS/JS. Нет зависимостей, регистрации и БД. Только 127.0.0.1, без публикации в сеть.
-- `gpt-5.4-mini` с `reasoning.effort=low`: интервью, объединённое извлечение контекста и следующий вопрос; синтез направлений вместе с первым шагом. Реальная доступность проверена запросом HTTP 200. Режим low выбран после живых проверок: без рассуждений модель иногда слишком рано завершала интервью.
-- `gpt-6.2-astra` + Responses API `web_search`: одно исследование после подтверждения. Доступность проверена живым полным сценарием.
-- Модели меняются через серверные `MODEL_FAST` и `MODEL_RESEARCH` в `.env`; для новых моделей нужна отдельная проверка совместимости.
-- Строгие JSON-схемы. История передаётся в запросе; `store:false`, без цепочек сохранённых Responses.
-- До 4 уточнений на каждое интервью; можно закончить раньше, если ответы уже известны. До 30 действий в сессии, до 2 попыток исследования, до 5 поисковых инструментальных вызовов на попытку. Автоматических повторов нет. Синтез может потребовать второй AI-запрос в рамках одного действия.
-- Изменения сессии фиксируются только после успешного шага. Одновременные действия отклоняются, повтор успешного requestId возвращает готовое состояние без повторного списания.
-- Сессии в памяти на 6 часов. Перезапуск сервера удаляет их. Черновики текста и выбор карточек сохраняются в sessionStorage вкладки. «Начать заново» удаляет текущие данные.
+## Development
 
-## Достоверность и ограничения
+Built with Node.js, plain HTML/CSS/JavaScript, and the OpenAI Responses API with web search. No frontend framework, account system, or database is required.
 
-Факты и ограничения выводятся со ссылками; сравнения помечены «Интерпретация AI», пользовательские ответы — «Ваше предпочтение». URL карточек и утверждений сверяются с URL, фактически возвращёнными инструментом поиска. Карточки без подтверждённого URL или фактов исключаются. Меньше пяти — честный частичный результат, даже ноль. Неподтверждённые ограничения не показываются как отсутствующие функции.
-
-Проверка URL подтверждает происхождение ссылки, но не гарантирует безошибочность интерпретации содержимого моделью. Отдельного независимого фактчекера в MVP нет; источники можно открыть и проверить. Выдача и страницы сервисов со временем меняются. Это не оценка бизнес-успеха или надёжности конкретных людей.
-
-Веб-страницы и пользовательские ответы передаются как данные с запретом исполнять их инструкции. Ключ находится только на сервере; сервер не логирует тела запросов, ответы API или ключ. Статика выдаётся по разрешённому списку файлов. Проверяются Host и Origin, cookie HttpOnly/SameSite Strict, CSP блокирует внешние скрипты. Обычная localhost cookie не требует HTTPS; приложение не предназначено для публичного хостинга.
-
-При сетевой ошибке, 429, неверном ключе или незавершённом ответе интерфейс показывает понятную ошибку и ручной повтор. Лимиты продолжают учитывать неудачные попытки. Для работы нужен интернет и баланс OpenAI API. API-расходы возникают при реальном использовании.
-
-## Проверка
-
-```powershell
-npm test
-# при работающем сервере: живой прогон, расходует API
-npm run smoke
+```sh
+npm test       # Automated checks; no live AI requests
+npm run build  # Build the static frontend
+npm run smoke  # Full live flow; requires a running app and uses API credits
 ```
 
-Локальные тесты проверяют происхождение ссылок, фильтрацию неподтверждённых утверждений, незавершённые ответы, отсутствие поискового вызова, сетевые ошибки, закрытые файлы и Origin. Живой прогон сохраняет тестовую сессию в игнорируемую Git папку `test-results`.
+## Sources and limitations
 
-Документация, сверенная при реализации: [Web search](https://developers.openai.com/api/docs/guides/tools-web-search), [GPT-5.4 mini](https://developers.openai.com/api/docs/models/gpt-5.4-mini), [Responses API](https://developers.openai.com/api/reference/resources/responses/methods/create).
+Source-backed claims, AI interpretations, and personal preferences are presented separately. Cards link to sources returned by web search; unsupported cards are excluded. If fewer than five solutions can be verified, the app shows partial results.
+
+Source links establish provenance, not a guarantee that every AI interpretation is correct. A missing feature mention is not proof that the feature is absent. Check the original sources when a detail matters.
+
+Sidequest is an MVP for personal projects, not a market validation platform. AI requests require an internet connection and may incur API charges.
