@@ -11,7 +11,7 @@ Describe an idea, explore existing solutions, and find a personal twist worth bu
 3. Review an inspiring 80–120 word mini-pitch grounded in the saved initial idea analysis and questionnaire answers, then confirm it and explore up to four source-backed solutions relevant to your idea and available where you want to realize it; “Not important” removes the geographic restriction.
 4. Compare companies in a table: source-backed implemented features and developed ideas linked to each company. Unconfirmed feature gaps are labeled.
 5. Tick individual ideas from either column across companies and optionally add a comment.
-6. Get one coherent MVP scoped to a single evening, a self-contained prompt for the working first version, and next steps.
+6. Get one coherent MVP scoped to a single evening, a self-contained prompt for the working first version, and practical steps to try it, show it to a potential user, and learn from their response.
 
 The interface and AI responses are in English. Ideas can be entered in any language.
 
