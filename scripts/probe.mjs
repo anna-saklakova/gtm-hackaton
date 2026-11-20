@@ -1,0 +1,2 @@
+const r = await fetch('https://api.openai.com/v1/responses', {method:'POST',headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({model:'gpt-5.4-mini',input:'Ответь одним словом: готово',max_output_tokens:100,store:false})});
+const d=await r.json(); console.log(JSON.stringify({status:r.status,model:d.model,ok:!!d.output,error:d.error?.code}));

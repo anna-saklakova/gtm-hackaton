@@ -1,0 +1,6 @@
+import {createCipheriv,createDecipheriv,createHash,randomBytes,randomUUID} from 'node:crypto';
+import {fresh} from './flow.mjs';
+function key(){const secret=process.env.SESSION_SECRET||process.env.OPENAI_API_KEY;if(!secret)throw new Error('Server secrets are not configured.');return createHash('sha256').update('sidequest-session-v1:').update(secret).digest();}
+export function newSession(){return {id:randomUUID(),expires:Date.now()+6*3600000,state:fresh()};}
+export function seal(session){const iv=randomBytes(12);const cipher=createCipheriv('aes-256-gcm',key(),iv);const encrypted=Buffer.concat([cipher.update(JSON.stringify(session),'utf8'),cipher.final()]);return Buffer.concat([iv,cipher.getAuthTag(),encrypted]).toString('base64url');}
+export function unseal(token){try{if(typeof token!=='string'||token.length>180000)throw new Error();const b=Buffer.from(token,'base64url');const decipher=createDecipheriv('aes-256-gcm',key(),b.subarray(0,12));decipher.setAuthTag(b.subarray(12,28));const s=JSON.parse(Buffer.concat([decipher.update(b.subarray(28)),decipher.final()]).toString('utf8'));if(!s.id||!s.state||s.expires<Date.now())throw new Error();return s;}catch{throw new Error('Session expired or invalid. Start a new idea.');}}
