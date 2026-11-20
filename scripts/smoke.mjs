@@ -1,7 +1,7 @@
 // Live end-to-end test. Uses the running local server and incurs API usage.
 import {writeFile} from 'node:fs/promises';
-const base='http://127.0.0.1:3000';let cookie='';let state;
-async function post(path,p){const r=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',...(cookie?{Cookie:cookie}:{})},body:JSON.stringify(p)});cookie=r.headers.get('set-cookie')?.split(';')[0]||cookie;const d=await r.json();if(!r.ok)throw new Error(d.error);state=d.state;return d;}
+const base=process.env.SMOKE_URL||'http://127.0.0.1:3000';let cookie='',token='';let state;
+async function post(path,p){const r=await fetch(base+path,{method:'POST',headers:{'Content-Type':'application/json',...(cookie?{Cookie:cookie}:{})},body:JSON.stringify({...p,...(token?{token}:{})})});cookie=r.headers.get('set-cookie')?.split(';')[0]||cookie;const d=await r.json();token=d.token||token;if(!r.ok)throw new Error(d.error);state=d.state;return d;}
 async function act(action,p={}){const t=Date.now();await post('/api/action',{action,requestId:crypto.randomUUID(),...p});console.log(JSON.stringify({action,stage:state.stage,seconds:Math.round((Date.now()-t)/1000),question:state.question?.text,solutions:state.research?.solutions.length}));}
 function english(value){if(/[А-Яа-яЁё]/.test(value||''))throw new Error('Expected English AI output');}
 await post('/api/session',{});
