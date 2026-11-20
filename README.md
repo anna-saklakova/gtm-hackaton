@@ -7,8 +7,8 @@ Describe an idea, explore existing solutions, and find a personal twist worth bu
 ## How it works
 
 1. Share an idea, an annoyance, or an area of interest.
-2. Answer 2–4 questions, including a required location question (or choose “Not important”); pick multiple options and add your own thoughts.
-3. Confirm the brief and explore up to four source-backed solutions available in your chosen location; “Not important” removes the geographic restriction.
+2. Answer 2–4 questions, including where you want to bring your idea to life (or choose “Not important”); pick multiple options and add your own thoughts.
+3. Confirm the brief and explore up to four source-backed solutions relevant to your idea and available where you want to realize it; “Not important” removes the geographic restriction.
 4. Compare what matches your idea and what useful extras each solution adds.
 5. Tick ideas you want to use and optionally add a comment.
 6. Get a product idea, tiny version, ready-to-use coding prompt, and next steps.

@@ -31,7 +31,7 @@ test('ticks alone generate the final product plan and pass selected ideas to AI'
 test('research never displays more than four verified companies',()=>{const url='https://real.org/';const card={name:'Real',url,facts:[{claim:'Verified',source:url}],limitations:[]};const r=validateResearch({solutions:Array.from({length:7},(_,i)=>({...card,name:`Company ${i}`})),note:''},{output:[{type:'web_search_call',action:{sources:[{url}]}}]});assert.equal(r.solutions.length,4);assert.doesNotMatch(r.note,/Partial/);});
 
 test('location is always asked first, within the four-question budget',async()=>{
- const s=fresh();await transition(s,'start',{answer:'A tool in Berlin'});assert.equal(s.question.kind,'location');assert.ok(s.question.options.includes('Not important'));assert.equal(s.discovery.length,0);
+ const s=fresh();await transition(s,'start',{answer:'A tool in Berlin'});assert.equal(s.question.kind,'location');assert.deepEqual(s.question.options,['Not important','Berlin','New York','Europe']);assert.equal(s.question.text,'Where would you like to bring your idea to life?');assert.equal(s.discovery.length,0);
  await mockAI({ready:false,summary:'A tool',question:'What should it simplify?',options:['Work','Hobbies']},async(inputs)=>{await transition(s,'answer',{answer:'Berlin, Germany'});assert.equal(s.location,'Berlin, Germany');assert.equal(s.discovery.length,1);assert.equal(JSON.parse(inputs[0].input).location,'Berlin, Germany');});
 });
 test('research receives explicit location including no geographic preference',async()=>{
