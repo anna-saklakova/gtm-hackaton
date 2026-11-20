@@ -17,7 +17,7 @@ The interface and AI responses are in English. Ideas can be entered in any langu
 
 ## Run locally
 
-Requires Node.js 24. No dependencies need to be installed. Local testing has no app-imposed request, search, or session-count quotas; OpenAI account limits still apply.
+Requires Node.js 24. No dependencies need to be installed. Local progress is saved to `.sidequest-local/sessions.json` (gitignored) and survives server restarts; the browser keeps a per-tab session ID. Local sessions do not expire automatically. Local testing has no app-imposed request, search, or session-count quotas; OpenAI account limits still apply.
 
 1. Copy `.env.example` to `.env`.
 2. Configure your server-side environment variables locally.
