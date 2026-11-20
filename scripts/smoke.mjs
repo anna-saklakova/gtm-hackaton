@@ -13,7 +13,7 @@ await act('research',{summary:state.summary});
 if(state.stage!=='results')throw new Error('Missing results');
 english(state.research.note);for(const s of state.research.solutions){for(const k of ['task','similarity','differences'])english(s[k]);for(const f of [...s.facts,...s.limitations])english(f.claim);}
 console.log(JSON.stringify({names:state.research.solutions.map(s=>({name:s.name,url:s.url,facts:s.facts.length})),note:state.research.note}));
-await act('feedback',{selected:state.research.solutions.length?[0]:[],answer:'Мне не хватает честных коротких заметок о сложностях конкретной собаки и договорённостей о пунктуальности. Хочу сделать для себя, без публичного маркетплейса. Я новичок: знаю немного HTML и JavaScript, есть два вечера по часу, бюджет ноль, готов разбираться, но без сервера, платежей и интеграций.'});
+await act('feedback',{selected:state.research.solutions[0]?.facts.length?['0:existing:0']:[],answer:'Мне не хватает честных коротких заметок о сложностях конкретной собаки и договорённостей о пунктуальности. Хочу сделать для себя, без публичного маркетплейса. Я новичок: знаю немного HTML и JavaScript, есть два вечера по часу, бюджет ноль, готов разбираться, но без сервера, платежей и интеграций.'});
 if(state.stage!=='step'||state.directions.length!==1)throw new Error('Missing directions');
 for(const d of state.directions){for(const k of ['title','audience','task','difference','preference','mvp','difficulty','assumptions'])english(d[k]);for(const v of Object.values(d.firstStep))english(v);}
 console.log(JSON.stringify({directions:state.directions.map(d=>({title:d.title,mvp:d.mvp,preference:d.preference}))}));

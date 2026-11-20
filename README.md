@@ -7,11 +7,11 @@ Describe an idea, explore existing solutions, and find a personal twist worth bu
 ## How it works
 
 1. Share an idea, an annoyance, or an area of interest.
-2. Choose Soft (default, 2–4 questions) or Hard (8–10). The full questionnaire is generated from your initial idea and shown together; pick multiple options and add your thoughts. One question asks where you want to realize the idea.
+2. Choose Soft (default, 2–4 questions) or Hard (8–10). The full questionnaire is generated from your initial idea and shown one question at a time; pick multiple options and add your thoughts. One question asks where you want to realize the idea.
 3. Review an inspiring 80–120 word mini-pitch grounded in the saved initial idea analysis and questionnaire answers, then confirm it and explore up to four source-backed solutions relevant to your idea and available where you want to realize it; “Not important” removes the geographic restriction.
-4. Compare what matches your idea and what useful extras each solution adds.
-5. Tick ideas you want to use and optionally add a comment.
-6. Get a product idea, tiny version, ready-to-use coding prompt, and next steps.
+4. Compare companies in a table: source-backed implemented features and developed ideas linked to each company. Unconfirmed feature gaps are labeled.
+5. Tick individual ideas from either column across companies and optionally add a comment.
+6. Get one coherent MVP scoped to a single evening, a self-contained prompt for the working first version, and next steps.
 
 The interface and AI responses are in English. Ideas can be entered in any language.
 
