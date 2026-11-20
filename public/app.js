@@ -1,7 +1,7 @@
 const $=s=>document.querySelector(s);let state,busy=false,lastRequest=null;
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const draftKey=()=>`draft:${state?.stage||'idea'}:${state?.question?.text||''}`;
-const drafts={get(k){try{return sessionStorage.getItem(k)||'';}catch{return '';}},set(k,v){try{sessionStorage.setItem(k,v);}catch{}},clear(){try{sessionStorage.clear();}catch{}}};
+const drafts={get(k){try{return sessionStorage.getItem(k)||'';}catch{return '';}},set(k,v){try{sessionStorage.setItem(k,v);}catch{}},remove(k){try{sessionStorage.removeItem(k);}catch{}},clear(){try{sessionStorage.clear();}catch{}}};
 const optionKey=()=>`${draftKey()}:options`;
 const selectedOptions=()=>{try{return JSON.parse(drafts.get(optionKey())||'[]');}catch{return [];}};
 const picked=()=>drafts.get('picked').split(',').filter(Boolean);
@@ -36,7 +36,24 @@ function render(){
 }
 function showError(msg){$('#error').hidden=false;$('#error').replaceChildren(document.createTextNode(msg));if(lastRequest){const b=document.createElement('button');b.textContent='Try again';b.className='quiet';b.onclick=()=>send(lastRequest);$('#error').append(b);}}
 function loading(on,search=false){busy=on;document.querySelectorAll('button,textarea,input').forEach(e=>e.disabled=on);$('#app').setAttribute('aria-busy',String(on));$('#status').textContent=on?(search?'Searching the web. Good finds take a moment… (up to 3 min)':'Thinking it through…'):'';}
-async function api(path,p){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...p,token:drafts.get('session-token')||undefined,localSessionId:drafts.get('local-session-id')||undefined})});const d=await r.json();if(d.localSessionId)drafts.set('local-session-id',d.localSessionId);if(d.token)drafts.set('session-token',d.token);if(!r.ok)throw new Error(d.error||'Something went wrong. Try again.');return d;}
-async function send(p){if(busy)return;if(!p.requestId)p.requestId=crypto.randomUUID();lastRequest=p;$('#error').hidden=true;loading(true,p.action==='research');try{const d=await api('/api/action',p);state=d.state;lastRequest=null;render();$('#app').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){showError(e.message==='Failed to fetch'?'Connection to the server was interrupted. Your answers are saved in this tab. Check that the local server is running, then try again.':e.message);}finally{loading(false);}}
+async function api(path,p){const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...p,token:drafts.get('session-token')||undefined,localSessionId:drafts.get('local-session-id')||undefined})});const d=await r.json();if(d.localSessionId)drafts.set('local-session-id',d.localSessionId);if(d.token)drafts.set('session-token',d.token);if(!r.ok)throw Object.assign(new Error(d.error||'Something went wrong. Try again.'),{status:r.status});return d;}
+async function send(p){
+ if(busy)return;
+ if(!p.requestId)p.requestId=crypto.randomUUID();
+ lastRequest=p;drafts.set('pending-request',JSON.stringify(p));$('#error').hidden=true;loading(true,p.action==='research');
+ try{
+  const deadline=Date.now()+5*60000;let d;
+  while(true){
+   d=await api('/api/action',p);if(!d.pending)break;
+   if(Date.now()>=deadline)throw new Error('This request is taking longer than expected. Try again to reconnect to it.');
+   await new Promise(resolve=>setTimeout(resolve,2000));
+  }
+  state=d.state;drafts.remove('pending-request');lastRequest=null;render();$('#app').scrollIntoView({behavior:'smooth',block:'start'});
+ }catch(e){
+  // Network failures keep the request ID; a definitive failure allows an explicit new attempt.
+  if(e.status&&e.status!==409){drafts.remove('pending-request');delete p.requestId;}
+  showError(e.message==='Failed to fetch'?'Connection to the server was interrupted. Your answers are saved in this tab. Try again to reconnect.':e.message);
+ }finally{loading(false);}
+}
 $('#reset').onclick=async()=>{if(busy)return;if(!confirm('Start fresh? This session’s results will be cleared.'))return;try{const d=await api('/api/reset',{});state=d.state;lastRequest=null;drafts.clear();if(d.localSessionId)drafts.set('local-session-id',d.localSessionId);if(d.token)drafts.set('session-token',d.token);$('#error').hidden=true;render();}catch(e){showError(e.message);}};
-async function init(){try{const d=await api('/api/session',{});state=d.state;render();}catch(e){showError(e.message);const b=document.createElement('button');b.textContent='Reconnect';b.onclick=init;$('#error').append(b);}}init();
+async function init(){try{const d=await api('/api/session',{});state=d.state;render();let pending;try{pending=JSON.parse(drafts.get('pending-request')||'null');}catch{drafts.remove('pending-request');}if(pending?.requestId&&pending?.action)await send(pending);}catch(e){showError(e.message);const b=document.createElement('button');b.textContent='Reconnect';b.onclick=init;$('#error').append(b);}}init();
