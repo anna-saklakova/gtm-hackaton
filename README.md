@@ -8,7 +8,7 @@ Describe an idea, explore existing solutions, and find a personal twist worth bu
 
 1. Share an idea, an annoyance, or an area of interest.
 2. Choose Soft (default, 2–4 questions) or Hard (8–10). The full questionnaire is generated from your initial idea and shown together; pick multiple options and add your thoughts. One question asks where you want to realize the idea.
-3. Review a concise clarified brief combining the saved initial idea analysis and all questionnaire answers, then confirm it and explore up to four source-backed solutions relevant to your idea and available where you want to realize it; “Not important” removes the geographic restriction.
+3. Review an inspiring 80–120 word mini-pitch grounded in the saved initial idea analysis and questionnaire answers, then confirm it and explore up to four source-backed solutions relevant to your idea and available where you want to realize it; “Not important” removes the geographic restriction.
 4. Compare what matches your idea and what useful extras each solution adds.
 5. Tick ideas you want to use and optionally add a comment.
 6. Get a product idea, tiny version, ready-to-use coding prompt, and next steps.
