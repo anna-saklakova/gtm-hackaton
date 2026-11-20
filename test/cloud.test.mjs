@@ -10,3 +10,25 @@ test('cloud route rewrite, state transition and retry use the same completed res
 test('failed actions retain answers and consume an attempt',async()=>{const s=newSession();s.state.idea='saved idea';const r=await request({token:seal(s),action:'choose',index:0,requestId:'bad-action'},'/api/action');assert.equal(r.status,400);const next=unseal(r.token);assert.equal(next.state.idea,'saved idea');assert.equal(next.state.attempts,1);assert.equal(next.state.stage,'idea');});
 test('cloud rejects cross-origin requests',async()=>{const r=await request({},'/api/session',{origin:'https://elsewhere.example'});assert.equal(r.status,403);});
 test('signed session search limit is enforced before calling AI',async()=>{const s=newSession();s.state.stage='confirm';s.state.searchAttempts=2;const r=await request({token:seal(s),action:'research',requestId:'limit-test'},'/api/action');assert.equal(r.status,429);assert.match(r.error,/Search limit/);});
+
+test('reloaded search reconnects to the running ID and replays its result without another AI call',async()=>{
+ const original=global.fetch;let release,started,calls=0;
+ const entered=new Promise(resolve=>started=resolve),gate=new Promise(resolve=>release=resolve);
+ global.fetch=async()=>{calls++;started();await gate;return {ok:true,json:async()=>({status:'completed',output:[{type:'web_search_call',action:{sources:[]}},{content:[{type:'output_text',text:JSON.stringify({solutions:[],note:'No verified finds'})}]}]})};};
+ const s=newSession();s.state.stage='confirm';s.state.summary='Quiet cafe finder';
+ const body={token:seal(s),action:'research',summary:s.state.summary,requestId:'reload-search'};
+ let running;
+ try{
+  running=request(body,'/api/action');await entered;
+  const pending=await request(body,'/api/action');assert.equal(pending.status,202);assert.equal(pending.pending,true);
+  const other=await request({...body,requestId:'different-search'},'/api/action');assert.equal(other.status,409);
+  release();const done=await running;assert.equal(done.status,200);assert.equal(done.state.stage,'results');
+  const replay=await request(body,'/api/action');assert.equal(replay.token,done.token);assert.equal(replay.state.searchAttempts,1);assert.equal(calls,1);
+ }finally{release();await running;global.fetch=original;}
+});
+
+test('reconnecting to a failed request replays the failure without another charged attempt',async()=>{
+ const s=newSession();const body={token:seal(s),action:'choose',index:0,requestId:'failed-reconnect'};
+ const failed=await request(body,'/api/action');const replay=await request(body,'/api/action');
+ assert.equal(replay.status,400);assert.equal(replay.token,failed.token);assert.equal(unseal(replay.token).state.attempts,1);
+});

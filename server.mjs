@@ -24,8 +24,9 @@ export const server=http.createServer(async(req,res)=>{
   if(!process.env.OPENAI_API_KEY)return reply(res,503,{error:'Add OPENAI_API_KEY to the server .env and restart the server.'});
   if(!p.requestId||typeof p.requestId!=='string'||p.requestId.length>100)return reply(res,400,{error:'Invalid request.'});
   if(session.last===p.requestId)return reply(res,200,{state:session.state,localSessionId:sid});
+  if(session.busy===p.requestId)return reply(res,202,{pending:true});
   if(session.busy)return reply(res,409,{error:'Your previous request is still running. Wait a moment and try again.'});
-  session.busy=true;session.state.attempts++;if(p.action==='research')session.state.searchAttempts++;
+  session.busy=p.requestId;session.state.attempts++;if(p.action==='research')session.state.searchAttempts++;
   try{const next=structuredClone(session.state);await transition(next,p.action,p);session.state=next;session.last=p.requestId;await save();return reply(res,200,{state:next,localSessionId:sid});}finally{session.busy=false;}
  }
  if(req.method==='POST'&&url.pathname==='/api/reset'){if(session.busy)return reply(res,409,{error:'Wait for the current request to finish.'});session.state=fresh();session.last=null;await save();return reply(res,200,{state:session.state,localSessionId:sid});}
