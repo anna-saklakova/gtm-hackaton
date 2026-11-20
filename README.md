@@ -7,7 +7,7 @@ Describe an idea, explore existing solutions, and find a personal twist worth bu
 ## How it works
 
 1. Share an idea, an annoyance, or an area of interest.
-2. Answer 2–4 questions, including where you want to bring your idea to life (or choose “Not important”); pick multiple options and add your own thoughts.
+2. Choose Soft (default, 2–4 questions) or Hard (8–10). The full questionnaire is generated from your initial idea and shown together; pick multiple options and add your thoughts. One question asks where you want to realize the idea.
 3. Confirm the brief and explore up to four source-backed solutions relevant to your idea and available where you want to realize it; “Not important” removes the geographic restriction.
 4. Compare what matches your idea and what useful extras each solution adds.
 5. Tick ideas you want to use and optionally add a comment.
@@ -17,7 +17,7 @@ The interface and AI responses are in English. Ideas can be entered in any langu
 
 ## Run locally
 
-Requires Node.js 24. No dependencies need to be installed.
+Requires Node.js 24. No dependencies need to be installed. Local testing has no app-imposed request, search, or session-count quotas; OpenAI account limits still apply.
 
 1. Copy `.env.example` to `.env`.
 2. Configure your server-side environment variables locally.
